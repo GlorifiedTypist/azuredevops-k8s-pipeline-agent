@@ -1,5 +1,5 @@
 ## Introduction
-Helm chart and Docker image to bootstrap a set of Azure DevOps agents in Kubernetes. This repo was put together as the official repositories and documentation is out of date and not actively maintained.
+Helm chart and Docker image to bootstrap a set of Azure DevOps agents in Kubernetes. This repo was put together as the official repositories and documentation is out of date and not actively maintained. No official documentation exists for hosting images in Kubernetes.
 
 ## Prerequisites
  - Kubernetes 1.8+ or newer
