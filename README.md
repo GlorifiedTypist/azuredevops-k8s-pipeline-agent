@@ -9,9 +9,9 @@ Helm chart and Docker image to bootstrap a set of Azure DevOps agents in Kuberne
 
 Before starting the chart installation, below configuration is required:
 
-1. Create a personal access token with the authorized scope **Agent Pools(read, manage)**  following these [instructions](https://docs.microsoft.com/en-us/vsts/git/_shared/personal-access-tokens). You will have to provide later the base64 encoded value of this token to the `azpToken` value of the chart.
+1. Create a personal access token with the authorized scope **Agent Pools(read, manage)**  following these [instructions](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/v2-linux?view=azure-devops#permissions). You will have to provide later the base64 encoded value of this token to the `azpToken` value of the chart. 
 
-2. By default this chart uses the agent pool "Default". Should you require a custom pool you can find more details [here](https://docs.microsoft.com/en-us/vsts/build-release/concepts/agents/pools-queues#creating-agent-pools-and-queues).
+2. By default this chart uses the agent pool "Default". Should you require a custom pool you can find more details [here](https://docs.microsoft.com/en-us/azure/devops/pipelines/agents/pools-queues?view=azure-devops&tabs=yaml%2Cbrowser). 
 
 ## Installing the Chart
 
