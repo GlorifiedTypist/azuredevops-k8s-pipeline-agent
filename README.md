@@ -18,14 +18,14 @@ Before starting the chart installation, below configuration is required:
 The chart can be installed with the following command:
 
 ```bash
-export AZP_TOKEN=$(echo -n '<VSTS TOKEN>' | base64)
+export AZP_TOKEN=$(echo -n '<AZP TOKEN>' | base64)
 
 helm install --namespace <NAMESPACE> --set azpToken=${AZP_TOKEN} --set azpUrl="https://dev.azure.com/replace_with_my_org/" -f values.yaml azp-agent ./chart/azdo-agent
 ```
 
-## Scale up the number of VSTS agents
+## Scale up the number of AZP agents
 
-The number of VSTS agents can be easily increased to `10` by using the following command:
+The number of AZP agents can be easily increased to `10` by using the following command:
 
 ```bash
 kubectl scale --namespace <NAMESPACE> azp-agent --replicas 10
