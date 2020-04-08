@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "azdo-agent.fullname" . }}
+  labels:
+    {{- include "azdo-agent.labels" . | nindent 4 }}
+    {{- if .Values.extraLabels }}
+    {{ toYaml .Values.extraLabels | indent 4 }}
+    {{- end }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "azdo-agent.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "azdo-agent.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+      - name: {{ .Chart.Name }}
+        securityContext:
+          {{- toYaml .Values.securityContext | nindent 12 }}
+        image: "{{ .Values.image.repository }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        env:
+          - name: AZP_TOKEN
+            valueFrom:
+              secretKeyRef:
+                name: azp-agent-secret
+                key: azpToken
+          {{- with .Values }}
+          - name: AZP_URL
+            value: {{ .azpUrl }}
+          - name: AZP_POOL
+            value: {{ .azpPool | default "Default" }}
+          - name: AZP_AGENT_NAME
+            value: {{ .azpAgentName | default "$HOSTNAME" }}
+          - name: AZP_WORK
+            value: {{ .azpWorkspace | default "/workspace" }}
+          {{- end }}
+          {{- range $key, $value := .Values.extraEnv }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+        volumeMounts:
+          - name: workspace
+            mountPath: {{ .Values.azpWorkspace | default "/workspace" }}
+          - name: docker-socket
+            mountPath: /var/run/docker.sock
+            readOnly: false
+        {{- if .Values.cleanRun }}
+        livenessProbe:
+          exec:
+            command:
+            - /bin/sh
+            - -c
+            - "! ls /opt/vsts/_diag | grep Worker || pgrep Agent.Worker"
+          initialDelaySeconds: 120
+          periodSeconds: 5
+        {{- end }}
+        resources:
+          {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: workspace
+          persistentVolumeClaim:
+            claimName: {{ include "azdo-agent.fullname" . }}
+        - name: docker-socket
+          hostPath:
+            path: /var/run/docker.sock
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
